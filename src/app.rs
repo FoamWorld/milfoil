@@ -60,7 +60,7 @@ impl eframe::App for MyApp {
             let result = self.init_environment();
             match result {
                 Ok(_) => {}
-                Err(e) => println!("Error while initialization: {:?}", e),
+                Err(e) => eprintln!("Error while initialization: {:?}", e),
             }
 
             self.state = AppState::Running;

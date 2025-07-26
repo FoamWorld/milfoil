@@ -48,7 +48,7 @@ fn load_font(ctx: &egui::Context) {
         ));
     if let Ok(handle) = handle {
         let font_data = handle.load().unwrap();
-        println!(
+        eprintln!(
             "Loaded font: {0} ({1})",
             font_data.full_name(),
             font_data.postscript_name().unwrap_or("???".to_string())
