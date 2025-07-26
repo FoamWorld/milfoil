@@ -45,11 +45,13 @@ impl MyApp {
         app_module.set("version", "0.1")?;
 
         let queue_module = lua.create_table()?;
+        queue_module.set("MODE_PLAIN", 0)?;
+        queue_module.set("MODE_MARKDOWN", 1)?;
         {
             let ref_messages = Rc::clone(&self.messages);
             queue_module.set(
                 "push_message",
-                lua.create_function(move |_, (text, mode, level): (String, String, i32)| {
+                lua.create_function(move |_, (text, mode, level): (String, u8, i32)| {
                     ref_messages.borrow_mut().push(text, mode, level);
                     Ok(())
                 })?,

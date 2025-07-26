@@ -4,13 +4,13 @@ use egui_commonmark::{CommonMarkCache, CommonMarkViewer};
 #[derive(Clone)]
 pub struct Message {
     text: String,
-    mode: String,
+    mode: u8,
     pub level: i32,
 }
 
 impl Message {
     pub fn display(&self, ui: &mut egui::Ui) {
-        if self.mode == "markdown" {
+        if self.mode == 1 {
             let mut cache = CommonMarkCache::default();
             CommonMarkViewer::new().show(ui, &mut cache, self.text.as_str());
         } else {
@@ -25,7 +25,7 @@ pub struct MessageLog {
 }
 
 impl MessageLog {
-    pub fn push(&mut self, text: String, mode: String, level: i32) {
+    pub fn push(&mut self, text: String, mode: u8, level: i32) {
         self.messages.push(Message { text, mode, level });
     }
 
