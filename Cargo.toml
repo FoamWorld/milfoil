@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-eframe = "0.31"
+eframe = "0.32"
+egui_commonmark = "0.21"
 font-kit = "0.14"
 mlua = { version = "0.11", features = ["lua54", "vendored"] }
 serde = { version = "1.0", features = ["derive"] }

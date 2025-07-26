@@ -18,14 +18,14 @@ pub struct MyApp {
     pub selected_visual: usize,
     pub show_sidebar: bool,
     pub lua_state: Lua,
-    pub message_log: Rc<RefCell<MessageLog>>,
+    pub messages: Rc<RefCell<MessageLog>>,
 }
 
 impl MyApp {
     pub fn new(config: Config) -> Self {
         let lua = Lua::new();
 
-        let message_log = Rc::new(RefCell::new(MessageLog::default()));
+        let messages = Rc::new(RefCell::new(MessageLog::default()));
 
         Self {
             state: AppState::Loading,
@@ -34,26 +34,43 @@ impl MyApp {
             selected_visual: 0,
             show_sidebar: true,
             lua_state: lua,
-            message_log,
+            messages,
         }
     }
 
     pub fn init_environment(&self) -> Result<(), mlua::Error> {
         let lua = &self.lua_state;
-        let p = Rc::clone(&self.message_log);
-        let message_module = lua.create_table()?;
-        message_module.set("version", "0.1")?;
-        message_module.set(
-            "push",
-            lua.create_function(move |_, text: String| {
-                p.borrow_mut().add_message(text);
-                Ok(())
-            })?,
-        )?;
+
+        let app_module = lua.create_table()?;
+        app_module.set("version", "0.1")?;
+
+        let queue_module = lua.create_table()?;
+        {
+            let ref_messages = Rc::clone(&self.messages);
+            queue_module.set(
+                "push_message",
+                lua.create_function(move |_, (text, mode, level): (String, String, i32)| {
+                    ref_messages.borrow_mut().push(text, mode, level);
+                    Ok(())
+                })?,
+            )?;
+        }
+        {
+            let ref_messages = Rc::clone(&self.messages);
+            queue_module.set(
+                "clear",
+                lua.create_function(move |_, (limit, decrease): (i32, i32)| {
+                    ref_messages.borrow_mut().clear(limit, decrease);
+                    Ok(())
+                })?,
+            )?;
+        }
+
+        app_module.set("queue", queue_module)?;
         lua.globals()
             .get::<mlua::Table>("package")?
             .get::<mlua::Table>("loaded")?
-            .set("app", message_module)?;
+            .set("app", app_module)?;
 
         lua.load(self.config.lua.preload.as_str()).exec()?;
         Ok(())

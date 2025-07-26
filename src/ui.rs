@@ -6,21 +6,18 @@ pub fn setup_custom_styles(ctx: &egui::Context) {
         style.spacing.button_padding = egui::Vec2::new(12.0, 8.0);
         style.spacing.item_spacing = egui::Vec2::new(12.0, 8.0);
 
-        style.text_styles = [
-            (
-                egui::TextStyle::Body,
-                egui::FontId::new(20.0, egui::FontFamily::Proportional),
-            ),
-            (
-                egui::TextStyle::Button,
-                egui::FontId::new(20.0, egui::FontFamily::Proportional),
-            ),
-            (
-                egui::TextStyle::Heading,
-                egui::FontId::new(40.0, egui::FontFamily::Proportional),
-            ),
-        ]
-        .into();
+        style.text_styles.insert(
+            egui::TextStyle::Body,
+            egui::FontId::new(20.0, egui::FontFamily::Proportional),
+        );
+        style.text_styles.insert(
+            egui::TextStyle::Button,
+            egui::FontId::new(20.0, egui::FontFamily::Proportional),
+        );
+        style.text_styles.insert(
+            egui::TextStyle::Heading,
+            egui::FontId::new(40.0, egui::FontFamily::Proportional),
+        );
 
         style.visuals.button_frame = false;
 
@@ -67,9 +64,11 @@ pub fn add_central(app: &mut MyApp, ctx: &egui::Context) {
         egui::ScrollArea::vertical()
             .auto_shrink([false, false])
             .show(ui, |ui| {
-                for msg in app.message_log.borrow().messages.iter() {
+                let borrow = app.messages.borrow();
+
+                for message in &borrow.messages {
                     ui.horizontal(|ui| {
-                        ui.label(msg);
+                        message.display(ui);
                     });
                 }
 
