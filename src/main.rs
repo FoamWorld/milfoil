@@ -1,14 +1,14 @@
+use crate::config::*;
 use app::MyApp;
 use eframe::egui;
 use font_kit::source::SystemSource;
 
 mod app;
+mod config;
 mod message;
 mod ui;
 
-fn main() -> eframe::Result<()> {
-    let app_name = "Milfoil";
-
+fn main() {
     let native_options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_resizable(false)
@@ -18,13 +18,14 @@ fn main() -> eframe::Result<()> {
     };
 
     eframe::run_native(
-        app_name,
+        APP_NAME,
         native_options,
         Box::new(|cc| {
             load_font(&cc.egui_ctx);
             Ok(Box::new(MyApp::new()))
         }),
     )
+    .expect("Failed to launch application.");
 }
 
 fn load_font(ctx: &egui::Context) {
@@ -36,12 +37,11 @@ fn load_font(ctx: &egui::Context) {
     //         data.postscript_name().unwrap_or("???".to_string())
     //     );
     // }
-    let expected_font_name = "MicrosoftYaHeiRegular";
     let registered_name = "system_font";
     let system_source = SystemSource::new();
 
     let handle = system_source
-        .select_by_postscript_name(expected_font_name)
+        .select_by_postscript_name(DEFAULT_POSTSCRIPT)
         .or(system_source.select_best_match(
             &[font_kit::family_name::FamilyName::SansSerif],
             &font_kit::properties::Properties::new(),
