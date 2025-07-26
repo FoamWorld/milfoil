@@ -14,6 +14,8 @@ pub enum AppState {
 pub struct MyApp {
     pub state: AppState,
     pub config: Config,
+    pub visuals: Vec<egui::Visuals>,
+    pub selected_visual: usize,
     pub show_sidebar: bool,
     pub lua_state: Lua,
     pub message_log: Rc<RefCell<MessageLog>>,
@@ -28,6 +30,8 @@ impl MyApp {
         Self {
             state: AppState::Loading,
             config,
+            visuals: vec![egui::Visuals::light(), egui::Visuals::dark()],
+            selected_visual: 0,
             show_sidebar: true,
             lua_state: lua,
             message_log,
@@ -72,27 +76,12 @@ impl eframe::App for MyApp {
             self.show_sidebar = !self.show_sidebar;
         }
 
+        setup_custom_styles(ctx);
+
         if self.show_sidebar {
-            add_sidebar(ctx);
+            add_sidebar(self, ctx);
         }
 
-        egui::CentralPanel::default().show(ctx, |ui| {
-            ctx.style_mut(|style| {
-                style.spacing.item_spacing = egui::Vec2::new(12.0, 8.0);
-            });
-            egui::ScrollArea::vertical()
-                .auto_shrink([false, false])
-                .show(ui, |ui| {
-                    for msg in self.message_log.borrow().messages.iter() {
-                        ui.horizontal(|ui| {
-                            ui.label(msg);
-                        });
-                    }
-
-                    if ui.ctx().input(|i| i.key_pressed(egui::Key::ArrowDown)) {
-                        ui.scroll_to_cursor(Some(egui::Align::BOTTOM));
-                    }
-                });
-        });
+        add_central(self, ctx);
     }
 }
