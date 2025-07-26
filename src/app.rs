@@ -1,5 +1,5 @@
 use crate::message::MessageLog;
-use crate::{config, ui::*};
+use crate::{config::*, ui::*};
 use eframe::egui;
 use mlua::Lua;
 use std::cell::RefCell;
@@ -13,19 +13,21 @@ pub enum AppState {
 
 pub struct MyApp {
     pub state: AppState,
+    pub config: Config,
     pub show_sidebar: bool,
     pub lua_state: Lua,
     pub message_log: Rc<RefCell<MessageLog>>,
 }
 
 impl MyApp {
-    pub fn new() -> Self {
+    pub fn new(config: Config) -> Self {
         let lua = Lua::new();
 
         let message_log = Rc::new(RefCell::new(MessageLog::default()));
 
         Self {
             state: AppState::Loading,
+            config,
             show_sidebar: true,
             lua_state: lua,
             message_log,
@@ -49,7 +51,7 @@ impl MyApp {
             .get::<mlua::Table>("loaded")?
             .set("app", message_module)?;
 
-        lua.load(config::LUA_PRELOAD).exec()?;
+        lua.load(self.config.lua.preload.as_str()).exec()?;
         Ok(())
     }
 }

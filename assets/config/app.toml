@@ -1,0 +1,5 @@
+[env]
+font = "MicrosoftYaHeiRegular"
+
+[lua]
+preload = "package.path = './scripts/?.lua;./scripts/?/lib.lua;?'; require('milfoil');"

@@ -9,6 +9,8 @@ mod message;
 mod ui;
 
 fn main() {
+    const APP_NAME: &'static str = "Milfoil 0.1.0";
+
     let native_options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_resizable(false)
@@ -17,18 +19,20 @@ fn main() {
         ..Default::default()
     };
 
+    let config = load_config();
+
     eframe::run_native(
         APP_NAME,
         native_options,
         Box::new(|cc| {
-            load_font(&cc.egui_ctx);
-            Ok(Box::new(MyApp::new()))
+            load_font(&cc.egui_ctx, &config);
+            Ok(Box::new(MyApp::new(config)))
         }),
     )
     .expect("Failed to launch application.");
 }
 
-fn load_font(ctx: &egui::Context) {
+fn load_font(ctx: &egui::Context, config: &Config) {
     // for font in system_source.all_fonts().unwrap() {
     //     let data = font.load().unwrap();
     //     println!(
@@ -41,7 +45,7 @@ fn load_font(ctx: &egui::Context) {
     let system_source = SystemSource::new();
 
     let handle = system_source
-        .select_by_postscript_name(DEFAULT_POSTSCRIPT)
+        .select_by_postscript_name(config.env.font.as_str())
         .or(system_source.select_best_match(
             &[font_kit::family_name::FamilyName::SansSerif],
             &font_kit::properties::Properties::new(),
