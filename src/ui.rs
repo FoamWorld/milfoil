@@ -40,10 +40,13 @@ pub fn add_sidebar(app: &mut MyApp, ctx: &egui::Context) {
         .default_width(480.0)
         .show(ctx, |ui| {
             ui.vertical(|ui| {
-                ui.heading("菜单");
+                ui.heading(app.locales.translate("menu-title", None));
                 ui.separator();
                 ui.horizontal(|ui| {
-                    if ui.button("更改主题").clicked() {
+                    if ui
+                        .button(app.locales.translate("menu-change_theme", None))
+                        .clicked()
+                    {
                         let len = app.visuals.len();
                         app.selected_visual += 1;
                         if app.selected_visual == len {
@@ -52,7 +55,10 @@ pub fn add_sidebar(app: &mut MyApp, ctx: &egui::Context) {
                         ctx.set_visuals(app.visuals[app.selected_visual].clone());
                     }
                 });
-                if ui.button("退出").clicked() {
+                if ui
+                    .button(app.locales.translate("menu-quit", None))
+                    .clicked()
+                {
                     std::process::exit(0);
                 }
             });

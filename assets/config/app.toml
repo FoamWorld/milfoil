@@ -1,4 +1,5 @@
 [env]
+lang = "zh"
 font = "MicrosoftYaHeiRegular"
 
 [lua]

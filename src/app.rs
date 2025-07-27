@@ -1,3 +1,4 @@
+use crate::i18n::*;
 use crate::message::MessageLog;
 use crate::{config::*, ui::*};
 use eframe::egui;
@@ -18,13 +19,14 @@ pub struct MyApp {
     pub selected_visual: usize,
     pub show_sidebar: bool,
     pub lua_state: Lua,
+    pub locales: LocaleTexts,
     pub messages: Rc<RefCell<MessageLog>>,
 }
 
 impl MyApp {
     pub fn new(config: Config) -> Self {
-        let lua = Lua::new();
-
+        let lua_state = Lua::new();
+        let locales = LocaleTexts::new(config.env.lang.clone());
         let messages = Rc::new(RefCell::new(MessageLog::default()));
 
         Self {
@@ -33,12 +35,13 @@ impl MyApp {
             visuals: vec![egui::Visuals::light(), egui::Visuals::dark()],
             selected_visual: 0,
             show_sidebar: true,
-            lua_state: lua,
+            lua_state,
+            locales,
             messages,
         }
     }
 
-    pub fn init_environment(&self) -> Result<(), mlua::Error> {
+    pub fn init_environment(&mut self) -> Result<(), mlua::Error> {
         let lua = &self.lua_state;
 
         let app_module = lua.create_table()?;
@@ -75,6 +78,10 @@ impl MyApp {
             .set("app", app_module)?;
 
         lua.load(self.config.lua.preload.as_str()).exec()?;
+
+        self.locales
+            .load_file("app.ftl")
+            .expect("Failed to load localization.");
         Ok(())
     }
 }
@@ -89,6 +96,7 @@ impl eframe::App for MyApp {
             }
 
             self.state = AppState::Running;
+            return;
         }
 
         if ctx.input(|i| i.key_pressed(egui::Key::Escape)) {

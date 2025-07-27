@@ -5,6 +5,7 @@ use font_kit::source::SystemSource;
 
 mod app;
 mod config;
+mod i18n;
 mod message;
 mod ui;
 

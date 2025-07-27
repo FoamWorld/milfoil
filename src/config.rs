@@ -3,6 +3,7 @@ use std::fs;
 
 #[derive(Debug, Deserialize)]
 pub struct EnvConfig {
+    pub lang: String,
     pub font: String,
 }
 
