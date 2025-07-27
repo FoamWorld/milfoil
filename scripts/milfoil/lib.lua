@@ -2,6 +2,7 @@ local module = {};
 
 require("app_aliases");
 local app = require("app");
-app.queue.push_marked("测试！**粗体**与*斜体*与 `code`");
+app.i18n.load_file("milfoil.ftl");
+app.queue.push_marked(app.i18n.t("milfoil-test-markdown"));
 
 return module;

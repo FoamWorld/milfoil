@@ -1,6 +1,5 @@
-use crate::i18n::*;
 use crate::message::MessageLog;
-use crate::{config::*, ui::*};
+use crate::{binding::*, config::*, i18n::*, ui::*};
 use eframe::egui;
 use mlua::Lua;
 use std::cell::RefCell;
@@ -19,7 +18,7 @@ pub struct MyApp {
     pub selected_visual: usize,
     pub show_sidebar: bool,
     pub lua_state: Lua,
-    pub locales: LocaleTexts,
+    pub locales: Rc<RefCell<LocaleTexts>>,
     pub messages: Rc<RefCell<MessageLog>>,
 }
 
@@ -27,7 +26,7 @@ impl MyApp {
     pub fn new(config: Config) -> Self {
         let lua_state = Lua::new();
         let locales = LocaleTexts::new(config.env.lang.clone());
-        let messages = Rc::new(RefCell::new(MessageLog::default()));
+        let messages = MessageLog::default();
 
         Self {
             state: AppState::Loading,
@@ -36,52 +35,33 @@ impl MyApp {
             selected_visual: 0,
             show_sidebar: true,
             lua_state,
-            locales,
-            messages,
+            locales: Rc::new(RefCell::new(locales)),
+            messages: Rc::new(RefCell::new(messages)),
         }
     }
 
     pub fn init_environment(&mut self) -> Result<(), mlua::Error> {
+        // setup lua environment
         let lua = &self.lua_state;
 
         let app_module = lua.create_table()?;
         app_module.set("version", "0.1")?;
-
-        let queue_module = lua.create_table()?;
-        queue_module.set("MODE_PLAIN", 0)?;
-        queue_module.set("MODE_MARKDOWN", 1)?;
-        {
-            let ref_messages = Rc::clone(&self.messages);
-            queue_module.set(
-                "push_message",
-                lua.create_function(move |_, (text, mode, level): (String, u8, i32)| {
-                    ref_messages.borrow_mut().push(text, mode, level);
-                    Ok(())
-                })?,
-            )?;
-        }
-        {
-            let ref_messages = Rc::clone(&self.messages);
-            queue_module.set(
-                "clear",
-                lua.create_function(move |_, (limit, decrease): (i32, i32)| {
-                    ref_messages.borrow_mut().clear(limit, decrease);
-                    Ok(())
-                })?,
-            )?;
-        }
-
-        app_module.set("queue", queue_module)?;
+        app_module.set("i18n", setup_i18n_module(self, lua)?)?;
+        app_module.set("queue", setup_queue_module(self, lua)?)?;
         lua.globals()
             .get::<mlua::Table>("package")?
             .get::<mlua::Table>("loaded")?
             .set("app", app_module)?;
 
-        lua.load(self.config.lua.preload.as_str()).exec()?;
-
+        // locales
         self.locales
+            .borrow_mut()
             .load_file("app.ftl")
             .expect("Failed to load localization.");
+
+        // run lua preload
+        lua.load(self.config.lua.preload.as_str()).exec()?;
+
         Ok(())
     }
 }

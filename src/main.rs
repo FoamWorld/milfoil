@@ -4,6 +4,7 @@ use eframe::egui;
 use font_kit::source::SystemSource;
 
 mod app;
+mod binding;
 mod config;
 mod i18n;
 mod message;
