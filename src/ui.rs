@@ -43,16 +43,22 @@ pub fn add_sidebar(app: &mut MyApp, ctx: &egui::Context) {
             ui.vertical(|ui| {
                 ui.heading(lc.translate("app-menu-title", None));
                 ui.separator();
-                ui.horizontal(|ui| {
-                    if ui.button(lc.translate("app-menu-change_theme", None)).clicked() {
-                        let len = app.visuals.len();
-                        app.selected_visual += 1;
-                        if app.selected_visual == len {
-                            app.selected_visual = 0;
-                        };
-                        ctx.set_visuals(app.visuals[app.selected_visual].clone());
-                    }
-                });
+                if ui.button(lc.translate("app-menu-info", None)).clicked() {
+                    app.messages
+                        .borrow_mut()
+                        .push(lc.translate("app-info-about", None), 1, 1);
+                }
+                if ui
+                    .button(lc.translate("app-menu-change_theme", None))
+                    .clicked()
+                {
+                    let len = app.visuals.len();
+                    app.selected_visual += 1;
+                    if app.selected_visual == len {
+                        app.selected_visual = 0;
+                    };
+                    ctx.set_visuals(app.visuals[app.selected_visual].clone());
+                }
                 if ui.button(lc.translate("app-menu-quit", None)).clicked() {
                     std::process::exit(0);
                 }
