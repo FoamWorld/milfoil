@@ -1,1 +1,9 @@
-milfoil-test-markdown = *我*能**吞下**玻璃~~而不伤身体~~。
+milfoil-door-name = 门
+milfoil-palace-name = 宫殿
+milfoil-plot-introduction-1 = 你在一个陌生的房间中醒来。这里似乎有点乱。
+milfoil-portal-name = 门径
+milfoil-room-name = 房间
+milfoil-seat-name = 座椅
+milfoil-sofa-name = 沙发
+milfoil-staff_lounge-name = 员工休息室
+milfoil-void_emperor_palace-name = 无上虚皇天
