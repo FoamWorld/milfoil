@@ -42,6 +42,19 @@ pub fn setup_i18n_module(app: &MyApp, lua: &Lua) -> Result<Table, Error> {
             })?,
         )?;
     }
+    {
+        let lc = Rc::clone(&app.locales);
+        i18n_module.set(
+            "_",
+            lua.create_function(move |_, key: String| {
+                if let Some(translation) = lc.borrow().try_translate(key.as_str(), None) {
+                    Ok(translation)
+                } else {
+                    Ok("".to_string())
+                }
+            })?,
+        )?;
+    }
     Ok(i18n_module)
 }
 
