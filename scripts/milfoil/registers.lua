@@ -11,12 +11,38 @@ obj.funclist.name = function(object, args)
 end;
 
 obj.funclist.setup_actions = function(object, args)
-	app.actions:set("{{ id }}", obj.apply(object, "name"), { {
-		name = app.i18n.t("milfoil-seat-action-sit"),
-		func = function()
-			print("^_^");
+	local raw = {};
+	for _, v in ipairs(object.types) do
+		local type_data = obj.types[v];
+		if type_data ~= nil then
+			for key, value in pairs(type_data.actions) do
+				raw[key] = raw[key] or value;
+			end
 		end
-	} });
+	end
+
+	local list = {};
+	local ind = 1;
+	for key, value in pairs(raw) do
+		local name = "";
+		for _, v in ipairs(object.types) do
+			-- looks like: milfoil-sit-on-milfoil-seat
+			name = app.i18n._(key .. "-on-" .. v);
+			if name ~= "" then
+				break;
+			end
+		end
+		if name == "" then
+			name = app.i18n.t(key);
+		end
+		list[ind] = {
+			name = name,
+			func = value,
+		};
+		ind = ind + 1;
+	end
+
+	app.actions:set("{{ id }}", obj.apply(object, "name"), list);
 end;
 
 obj.funclist.get_text = function(object, args)

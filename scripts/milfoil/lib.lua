@@ -11,6 +11,7 @@ local lounge = {
 };
 
 require("milfoil/registers");
+obj.types["milfoil-seat"] = require("milfoil/types/seat");
 local sofa = require("milfoil/objects/sofa");
 obj.apply(sofa, "setup_actions");
 
