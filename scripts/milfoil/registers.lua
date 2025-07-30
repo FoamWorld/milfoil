@@ -42,7 +42,7 @@ obj.funclist.setup_actions = function(object, args)
 		ind = ind + 1;
 	end
 
-	app.actions:set("{{ id }}", obj.apply(object, "name"), list);
+	app.actions:set(object.id, obj.apply(object, "name"), list);
 end;
 
 obj.funclist.get_text = function(object, args)
