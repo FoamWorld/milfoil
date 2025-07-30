@@ -3,6 +3,7 @@ use app::MyApp;
 use eframe::egui;
 use font_kit::source::SystemSource;
 
+mod actions;
 mod app;
 mod binding;
 mod config;

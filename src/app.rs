@@ -1,3 +1,4 @@
+use crate::actions::ActionsBundle;
 use crate::message::MessageLog;
 use crate::{binding::*, config::*, i18n::*, ui::*};
 use eframe::egui;
@@ -20,6 +21,7 @@ pub struct MyApp {
     pub lua_state: Lua,
     pub locales: Rc<RefCell<LocaleTexts>>,
     pub messages: Rc<RefCell<MessageLog>>,
+    pub actions_bundle: Rc<RefCell<ActionsBundle>>,
 }
 
 impl MyApp {
@@ -27,6 +29,7 @@ impl MyApp {
         let lua_state = Lua::new();
         let locales = LocaleTexts::new(config.env.lang.clone());
         let messages = MessageLog::default();
+        let actions_bundle = ActionsBundle::new();
 
         Self {
             state: AppState::Loading,
@@ -37,6 +40,7 @@ impl MyApp {
             lua_state,
             locales: Rc::new(RefCell::new(locales)),
             messages: Rc::new(RefCell::new(messages)),
+            actions_bundle: Rc::new(RefCell::new(actions_bundle)),
         }
     }
 
@@ -44,14 +48,7 @@ impl MyApp {
         // setup lua environment
         let lua = &self.lua_state;
 
-        let app_module = lua.create_table()?;
-        app_module.set("version", "0.1")?;
-        app_module.set("i18n", setup_i18n_module(self, lua)?)?;
-        app_module.set("queue", setup_queue_module(self, lua)?)?;
-        lua.globals()
-            .get::<mlua::Table>("package")?
-            .get::<mlua::Table>("loaded")?
-            .set("app", app_module)?;
+        setup_lua_environment(self, lua)?;
 
         // locales
         self.locales

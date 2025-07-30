@@ -1,6 +1,24 @@
-use crate::app::MyApp;
-use mlua::{Error, Lua, Table};
+use crate::{actions::RefActionsBundle, app::MyApp};
+use mlua::{Error, IntoLua, Lua, Table};
 use std::rc::Rc;
+
+pub fn setup_lua_environment(app: &MyApp, lua: &Lua) -> Result<(), mlua::Error> {
+    let module = lua.create_table()?;
+    module.set("version", "0.1")?;
+    module.set("actions", setup_actions_interface(app))?;
+    module.set("i18n", setup_i18n_module(app, lua)?)?;
+    module.set("queue", setup_queue_module(app, lua)?)?;
+    lua.globals()
+        .get::<Table>("package")?
+        .get::<Table>("loaded")?
+        .set("app", module)?;
+    Ok(())
+}
+
+pub fn setup_actions_interface(app: &MyApp) -> impl IntoLua {
+    let actions = Rc::clone(&app.actions_bundle);
+    RefActionsBundle(actions)
+}
 
 pub fn setup_i18n_module(app: &MyApp, lua: &Lua) -> Result<Table, Error> {
     let i18n_module = lua.create_table()?;

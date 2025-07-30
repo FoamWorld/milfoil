@@ -4,6 +4,7 @@ milfoil-plot-introduction-1 = 你在一个陌生的房间中醒来。这里似�
 milfoil-portal-name = 门径
 milfoil-room-name = 房间
 milfoil-seat-name = 座椅
+milfoil-seat-action-sit = 坐下
 milfoil-sofa-name = 沙发
 milfoil-staff_lounge-name = 员工休息室
 milfoil-void_emperor_palace-name = 无上虚皇天

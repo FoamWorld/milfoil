@@ -71,11 +71,28 @@ pub fn add_central(app: &mut MyApp, ctx: &egui::Context) {
         egui::ScrollArea::vertical()
             .auto_shrink([false, false])
             .show(ui, |ui| {
-                let borrow = app.messages.borrow();
+                let ml = app.messages.borrow();
 
-                for message in &borrow.messages {
+                for message in &ml.messages {
                     ui.horizontal(|ui| {
                         message.display(ui);
+                    });
+                }
+
+                ui.separator();
+
+                let ab = app.actions_bundle.borrow();
+                if !ab.is_empty() {
+                    ui.horizontal(|ui| {
+                        for (_, actions) in &ab.dict {
+                            ui.menu_button(actions.name.clone(), |ui| {
+                                for action in &actions.list {
+                                    if ui.small_button(action.name.clone()).clicked() {
+                                        let _: () = action.func.call(()).unwrap();
+                                    }
+                                }
+                            });
+                        }
                     });
                 }
 

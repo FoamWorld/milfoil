@@ -21,5 +21,11 @@ local lounge = {
 };
 
 app.queue.push(obj.apply(lounge, "get_text", { field = "name" }));
+app.actions:set("seat", app.i18n.t("milfoil-seat-name"), { {
+	name = app.i18n.t("milfoil-seat-action-sit"),
+	func = function()
+		print("^_^");
+	end
+} });
 
 return module;
