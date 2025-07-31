@@ -1,10 +1,12 @@
 use crate::{actions::RefActionsBundle, app::MyApp};
-use mlua::{Error, IntoLua, Lua, Table};
+use mlua::{Error, Function, IntoLua, Lua, Table};
 use std::rc::Rc;
 
 pub fn setup_lua_environment(app: &MyApp, lua: &Lua) -> Result<(), mlua::Error> {
     let module = lua.create_table()?;
     module.set("version", "0.1")?;
+    module.set("update", lua.create_function(|_, _: ()| Ok(()))?)?;
+    module.set("quit", lua.create_function(|_, _: ()| Ok(()))?)?;
     module.set("actions", setup_actions_interface(app))?;
     module.set("i18n", setup_i18n_module(app, lua)?)?;
     module.set("queue", setup_queue_module(app, lua)?)?;
@@ -13,6 +15,16 @@ pub fn setup_lua_environment(app: &MyApp, lua: &Lua) -> Result<(), mlua::Error> 
         .get::<Table>("loaded")?
         .set("app", module)?;
     Ok(())
+}
+
+pub fn run_registered(lua: &Lua, key: &str) -> Result<(), mlua::Error> {
+    let update = lua
+        .globals()
+        .get::<Table>("package")?
+        .get::<Table>("loaded")?
+        .get::<Table>("app")?
+        .get::<Function>(key)?;
+    update.call(())
 }
 
 pub fn setup_actions_interface(app: &MyApp) -> impl IntoLua {

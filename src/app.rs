@@ -50,14 +50,16 @@ impl MyApp {
 
         setup_lua_environment(self, lua)?;
 
+        lua.load(self.config.lua.preload.as_str()).exec()?;
+
         // locales
         self.locales
             .borrow_mut()
             .load_file("app.ftl")
             .expect("Failed to load localization.");
 
-        // run lua preload
-        lua.load(self.config.lua.preload.as_str()).exec()?;
+        // run lua initialize
+        lua.load(self.config.lua.initialize.as_str()).exec()?;
 
         Ok(())
     }

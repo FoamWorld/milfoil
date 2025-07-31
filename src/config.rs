@@ -10,6 +10,7 @@ pub struct EnvConfig {
 #[derive(Debug, Deserialize)]
 pub struct LuaConfig {
     pub preload: String,
+    pub initialize: String,
 }
 
 #[derive(Debug, Deserialize)]

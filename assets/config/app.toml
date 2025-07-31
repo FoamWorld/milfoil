@@ -3,4 +3,5 @@ lang = "zh"
 font = "MicrosoftYaHeiRegular"
 
 [lua]
-preload = "package.path = './scripts/?.lua;./scripts/?/lib.lua;?'; require('milfoil');"
+preload = "package.path = './scripts/?.lua;./scripts/?/lib.lua;?';"
+initialize = "require('milfoil');"

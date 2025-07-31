@@ -1,4 +1,4 @@
-use crate::app::MyApp;
+use crate::{app::MyApp, binding::run_registered};
 use eframe::egui::{self, Color32, Context, FontFamily, Stroke, Style, TextStyle};
 
 const DF_FONT_ID: egui::FontId = egui::FontId::new(20.0, FontFamily::Proportional);
@@ -52,6 +52,7 @@ pub fn add_sidebar(app: &mut MyApp, ctx: &Context) {
                     ctx.set_visuals(app.visuals[app.selected_visual].clone());
                 }
                 if ui.button(lc.translate("app-menu-quit", None)).clicked() {
+                    let _ = run_registered(&app.lua_state, "quit");
                     std::process::exit(0);
                 }
             });
@@ -83,7 +84,8 @@ pub fn add_central(app: &mut MyApp, ctx: &Context) {
                             ui.menu_button(actions.name.clone(), |ui| {
                                 for action in &actions.list {
                                     if ui.small_button(action.name.clone()).clicked() {
-                                        let _: () = action.func.call(()).unwrap();
+                                        let _ = action.func.call::<()>(());
+                                        let _ = run_registered(&app.lua_state, "update");
                                     }
                                 }
                             });
