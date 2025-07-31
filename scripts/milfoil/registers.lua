@@ -15,7 +15,8 @@ obj.funclist.setup_actions = function(object, args)
 	for _, v in ipairs(object.types) do
 		local type_data = obj.types[v];
 		if type_data ~= nil then
-			for key, value in pairs(type_data.actions) do
+			local actions = obj.exec(type_data.actions, args);
+			for key, value in pairs(actions) do
 				raw[key] = raw[key] or value;
 			end
 		end

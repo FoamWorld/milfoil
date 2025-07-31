@@ -14,13 +14,18 @@ local actives = require("milfoil/actives");
 
 Tree:add_child("#1", require("milfoil/objects/staff_lounge"));
 Tree:add_child("#2", require("milfoil/objects/sofa"), "#1");
-actives.operator.position = "#2";
+actives.operator:relocate("#1");
 
 local function update()
+	local set = Tree:get_children_id(actives.operator.position);
+	for id, _ in pairs(set) do
+		local node = Tree.nodes[id];
+		obj.apply(node, "setup_actions");
+	end
 	local node = Tree.nodes[actives.operator.position];
 	obj.apply(node, "setup_actions");
 end
 
-update();
+xpcall(update, function() print(debug.traceback()) end)
 
 return module;

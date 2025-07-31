@@ -30,6 +30,11 @@ function Tree:add_child(id, node, parent_id)
 	self.status[id] = 0;
 end
 
+function Tree:get_children_id(parent_id)
+	-- set
+	return indices.children[parent_id];
+end
+
 function Tree.add_child_schedule()
 	-- todo
 end
