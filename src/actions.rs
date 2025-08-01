@@ -92,7 +92,7 @@ impl UserData for RefActionsBundle {
             Ok(())
         });
 
-        methods.add_method("set", |_, this, (key, value): (String, Actions)| {
+        methods.add_method("insert", |_, this, (key, value): (String, Actions)| {
             let mut bundle = this.0.borrow_mut();
             bundle.dict.insert(key, value);
             Ok(())

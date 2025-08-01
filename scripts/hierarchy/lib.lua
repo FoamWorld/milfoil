@@ -1,7 +1,11 @@
 -- Use string for keys.
 local indices = {
-	parent = {},
-	children = {},
+	parent = {
+		root = "root",
+	},
+	children = {
+		root = {},
+	},
 };
 
 Tree = {
@@ -22,17 +26,20 @@ Tree = {
 function Tree:add_child(id, node, parent_id)
 	parent_id = parent_id or "root";
 	indices.parent[id] = parent_id;
-	indices.children[parent_id] = {
-		[id] = true
-	};
+	indices.children[id] = {};
+	indices.children[parent_id][id] = true;
 	node.id = id;
 	self.nodes[id] = node;
 	self.status[id] = 0;
 end
 
-function Tree:get_children_id(parent_id)
+function Tree.get_children_id(parent_id)
 	-- set
 	return indices.children[parent_id];
+end
+
+function Tree.get_parent_id(id)
+	return indices.parent[id];
 end
 
 function Tree.add_child_schedule()

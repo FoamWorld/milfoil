@@ -12,13 +12,13 @@ obj.types["milfoil-seat"] = require("milfoil/types/seat");
 
 local actives = require("milfoil/actives");
 
-Tree:add_child("#1", require("milfoil/objects/staff_lounge"));
+Tree:add_child("#1", require("milfoil/objects/staff_lounge"), nil);
 Tree:add_child("#2", require("milfoil/objects/sofa"), "#1");
 actives.operator:relocate("#1");
 
-local function routine()
-	-- app.actions:clear(); -- panic: RefCell already borrowed
-	local set = Tree:get_children_id(actives.operator.position);
+function module.routine()
+	app.actions:clear();
+	local set = Tree.get_children_id(actives.operator.position);
 	for id, _ in pairs(set) do
 		local node = Tree.nodes[id];
 		obj.apply(node, "setup_actions");
@@ -28,7 +28,9 @@ local function routine()
 end
 
 function app.update()
-	xpcall(routine, function() print(debug.traceback()) end);
+	xpcall(module.routine, function(err)
+		print(err);
+	end);
 end
 
 app.update();

@@ -1,5 +1,5 @@
 use crate::{app::MyApp, binding::run_registered};
-use eframe::egui::{self, Color32, Context, FontFamily, Stroke, Style, TextStyle};
+use eframe::egui::{self, Color32, Context, FontFamily, Stroke, Style, TextStyle, Ui};
 
 const DF_FONT_ID: egui::FontId = egui::FontId::new(20.0, FontFamily::Proportional);
 const FG_LIGHT_INACTIVE: Color32 = Color32::from_rgb(0xb9, 0x7c, 0x2c);
@@ -77,20 +77,8 @@ pub fn add_central(app: &mut MyApp, ctx: &Context) {
 
                 ui.separator();
 
-                let ab = app.actions_bundle.borrow();
-                if !ab.is_empty() {
-                    ui.horizontal(|ui| {
-                        for (_, actions) in &ab.dict {
-                            ui.menu_button(actions.name.clone(), |ui| {
-                                for action in &actions.list {
-                                    if ui.small_button(action.name.clone()).clicked() {
-                                        let _ = action.func.call::<()>(());
-                                        let _ = run_registered(&app.lua_state, "update");
-                                    }
-                                }
-                            });
-                        }
-                    });
+                if add_action_buttons(app, ui) {
+                    let _ = run_registered(&app.lua_state, "update");
                 }
 
                 if ui.ctx().input(|i| i.key_pressed(egui::Key::ArrowDown)) {
@@ -98,4 +86,24 @@ pub fn add_central(app: &mut MyApp, ctx: &Context) {
                 }
             });
     });
+}
+
+fn add_action_buttons(app: &MyApp, ui: &mut Ui) -> bool {
+    let ab = app.actions_bundle.borrow();
+    let mut flag = false;
+    if !ab.is_empty() {
+        ui.horizontal(|ui| {
+            for (_, actions) in &ab.dict {
+                ui.menu_button(actions.name.clone(), |ui| {
+                    for action in &actions.list {
+                        if ui.small_button(action.name.clone()).clicked() {
+                            let _ = action.func.call::<()>(());
+                            flag = true;
+                        }
+                    }
+                });
+            }
+        });
+    }
+    flag
 }

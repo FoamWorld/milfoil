@@ -8,4 +8,6 @@ milfoil-sofa = 沙发
 milfoil-staff_lounge = 员工休息室
 milfoil-void_emperor_palace = 无上虚皇天
 
+milfoil-leave = 离开
+milfoil-leave-on-milfoil-seat = 起身
 milfoil-sit = 坐下
