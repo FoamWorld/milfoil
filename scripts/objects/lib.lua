@@ -1,10 +1,30 @@
 local module = {};
 
+local function with_type(self, type_name, args)
+	table.insert(self.types, type_name);
+
+	local type_data = module.types[type_name];
+	if type(type_data) == "table" then
+		local initializer = module.types[type_name].init;
+		if type(initializer) == "function" then
+			initializer(self, args);
+		end
+	end
+
+	return self;
+end
+
 module.types = {};
 
-module.funclist = {
-	-- reserved: init
-};
+module.methods = {};
+
+function module.declare(type_name, args)
+	module.types[type_name] = args;
+end
+
+function module.new()
+	return { types = {}, with = with_type };
+end
 
 function module.apply(object, funcname, args)
 	-- enable args.override?
@@ -12,7 +32,7 @@ function module.apply(object, funcname, args)
 	args.object = object;
 	local property = object[funcname];
 	if type(property) == "nil" then
-		return module.funclist[funcname](object, args);
+		return module.methods[funcname](object, args);
 	else
 		return module.exec(property, args);
 	end

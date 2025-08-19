@@ -1,3 +1,3 @@
-return {
-	types = { "milfoil-staff_lounge", "milfoil-room" },
-};
+local obj = require("objects");
+
+return obj.new():with("milfoil-room"):with("milfoil-staff_lounge");

@@ -1,15 +1,22 @@
 -- Active elements in the world.
 local module = {};
 
-local bar = require("milfoil/types/bar");
+local obj = require("objects");
+
+local function bar(max, speed)
+	return obj.new():with("milfoil-bar", {
+		max = max,
+		speed = speed,
+	});
+end
 
 module.operator = {
 	position = "root",
 	-- besides = {},
 	size = 2.0,
 	components = {
-		health = bar.new(10.0),
-		stamina = bar.new(200.0, 0.1),
+		health = bar(10.0),
+		stamina = bar(200.0, 0.1),
 	},
 };
 

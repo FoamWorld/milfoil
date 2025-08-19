@@ -6,15 +6,19 @@ local app = require("app");
 app.i18n.load_file("milfoil.ftl");
 
 local obj = require("objects");
+for _, value in ipairs({ "bar", "physical", "seat" }) do
+	obj.declare("milfoil-" .. value, require("milfoil/types/" .. value));
+end
 
 require("milfoil/registers");
-obj.types["milfoil-seat"] = require("milfoil/types/seat");
 
 local actives = require("milfoil/actives");
 
 Tree:add_child("#1", require("milfoil/objects/staff_lounge"), nil);
 Tree:add_child("#2", require("milfoil/objects/sofa"), "#1");
 actives.operator:relocate("#1");
+
+app.queue.push(app.i18n.t("milfoil-plot-introduction-1"));
 
 function module.routine()
 	app.actions:clear();
