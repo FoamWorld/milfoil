@@ -1,5 +1,7 @@
 local actives = require("milfoil/actives");
 local obj = require("objects");
+local tree = require("hierarchy");
+
 local function sit(args)
 	actives.time:tick(5.0);
 	actives.operator:relocate(args.object.id);
@@ -9,7 +11,7 @@ end
 
 local function leave(args)
 	actives.time:tick(5.0);
-	actives.operator:relocate(Tree.get_parent_id(args.object.id));
+	actives.operator:relocate(tree:get_parent_id(args.object.id));
 	obj.call(actives.operator.components.stamina, "mutate", -1.0);
 end
 
