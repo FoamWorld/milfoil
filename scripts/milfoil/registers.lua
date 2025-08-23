@@ -1,8 +1,9 @@
 local app = require("app");
 local obj = require("objects");
 obj.methods.name = function(object, args)
-	for _, v in ipairs(object.types) do
-		local tr = app.i18n._(v);
+	for i = #object.types, 1, -1 do
+		local type_name = object.types[i];
+		local tr = app.i18n._(type_name);
 		if tr ~= "" then
 			return tr;
 		end

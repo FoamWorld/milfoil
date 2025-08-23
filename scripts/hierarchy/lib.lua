@@ -1,9 +1,7 @@
 local tree = {
 	-- 节点的数据
 	nodes = {
-		root = {
-			is_block = true,
-		},
+		root = { types = {} },
 	},
 
 	-- 索引信息，使用字符串。

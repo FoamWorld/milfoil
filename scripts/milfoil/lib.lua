@@ -6,7 +6,7 @@ local app = require("app");
 app.i18n.load_file("milfoil.ftl");
 
 local obj = require("objects");
-for _, value in ipairs({ "bar", "physical", "seat" }) do
+for _, value in ipairs({ "bar", "item_supervision_screen", "physical", "seat" }) do
 	obj.declare("milfoil-" .. value, require("milfoil/types/" .. value));
 end
 
@@ -18,6 +18,7 @@ local tree = require("hierarchy");
 
 tree:add_child("#1", require("milfoil/objects/staff_lounge"), nil);
 tree:add_child("#2", require("milfoil/objects/sofa"), "#1");
+tree:add_child("#3", require("milfoil/objects/staff_lounge_screen"), "#1");
 actives.operator:relocate("#1");
 
 app.queue.push(app.i18n.t("milfoil-plot-introduction-1"));
