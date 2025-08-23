@@ -1,8 +1,24 @@
 local app = require("app");
 local queue = app.queue;
-queue.push = function (text)
-	queue.push_message(text, app.queue.MODE_PLAIN, 1);
+
+local message_queue = {};
+queue.flush = function()
+	queue.push(message_queue);
+	message_queue = {};
+end
+
+queue.push_plain = function(text)
+	table.insert(message_queue, {
+		text = text,
+		mode = queue.MODE_PLAIN,
+		level = 1
+	});
 end;
-queue.push_marked = function (text)
-	queue.push_message(text, app.queue.MODE_MARKDOWN, 1);
+
+queue.push_marked = function(text)
+	table.insert(message_queue, {
+		text = text,
+		mode = queue.MODE_MARKDOWN,
+		level = 1
+	});
 end;

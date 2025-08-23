@@ -67,12 +67,14 @@ pub fn add_central(app: &mut MyApp, ctx: &Context) {
         egui::ScrollArea::vertical()
             .auto_shrink([false, false])
             .show(ui, |ui| {
-                let ml = app.messages.borrow();
+                {
+                    let ml = app.messages.borrow();
 
-                for message in &ml.messages {
-                    ui.horizontal(|ui| {
-                        message.display(ui);
-                    });
+                    for message in &ml.messages {
+                        ui.horizontal(|ui| {
+                            message.display(ui);
+                        });
+                    }
                 }
 
                 ui.separator();

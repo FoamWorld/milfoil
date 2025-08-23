@@ -21,7 +21,7 @@ tree:add_child("#2", require("milfoil/objects/sofa"), "#1");
 tree:add_child("#3", require("milfoil/objects/staff_lounge_screen"), "#1");
 actives.operator:relocate("#1");
 
-app.queue.push(app.i18n.t("milfoil-plot-introduction-1"));
+app.queue.push_plain(app.i18n.t("milfoil-plot-introduction-1"));
 
 function module.routine()
 	app.actions:clear();
@@ -32,6 +32,7 @@ function module.routine()
 	end
 	local node = tree.nodes[actives.operator.position];
 	obj.apply(node, "setup_actions");
+	app.queue.flush();
 end
 
 function app.update()

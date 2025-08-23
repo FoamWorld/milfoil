@@ -9,7 +9,7 @@ local function watch()
 	for id, _ in pairs(children) do
 		local node = tree.nodes[id];
 		-- todo: 按照记录；计数
-		app.queue.push(obj.apply(node, "name"));
+		app.queue.push_plain(obj.apply(node, "name"));
 	end
 end
 

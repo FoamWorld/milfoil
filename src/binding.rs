@@ -1,4 +1,4 @@
-use crate::{actions::RefActionsBundle, app::MyApp};
+use crate::{actions::RefActionsBundle, app::MyApp, message::MessageLog};
 use mlua::{Error, Function, IntoLua, Lua, Table};
 use std::rc::Rc;
 
@@ -77,9 +77,9 @@ pub fn setup_queue_module(app: &MyApp, lua: &Lua) -> Result<Table, Error> {
     {
         let ref_messages = Rc::clone(&app.messages);
         queue_module.set(
-            "push_message",
-            lua.create_function(move |_, (text, mode, level): (String, u8, i32)| {
-                ref_messages.borrow_mut().push(text, mode, level);
+            "push",
+            lua.create_function(move |_, log: MessageLog| {
+                ref_messages.borrow_mut().append(log);
                 Ok(())
             })?,
         )?;
