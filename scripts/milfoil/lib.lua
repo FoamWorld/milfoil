@@ -17,21 +17,19 @@ local actives = require("milfoil/actives");
 local tree = require("hierarchy");
 
 tree:add_child("#1", require("milfoil/objects/staff_lounge"), nil);
-tree:add_child("#2", require("milfoil/objects/sofa"), "#1");
-tree:add_child("#3", require("milfoil/objects/staff_lounge_screen"), "#1");
+tree:reach("root", "#1", tree.NODE_LOADED);
 actives.operator:relocate("#1");
 
 app.queue.push_plain(app.i18n.t("milfoil-plot-introduction-1"));
 
 function module.routine()
 	app.actions:clear();
-	local set = tree:get_children_id(actives.operator.position);
-	for id, _ in pairs(set) do
+	local pos = actives.operator.position;
+	obj.apply(tree.nodes[actives.operator.position], "setup_actions");
+	for id, _ in pairs(tree:get_children_id(pos)) do
 		local node = tree.nodes[id];
 		obj.apply(node, "setup_actions");
 	end
-	local node = tree.nodes[actives.operator.position];
-	obj.apply(node, "setup_actions");
 	app.queue.flush();
 end
 

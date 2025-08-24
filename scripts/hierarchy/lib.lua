@@ -21,6 +21,9 @@ local tree = {
 	NODE_CLONE = 3, -- 待生成，会复制一份
 	NODE_CUSTOM = 4, -- 待生成，生成方式自定义
 	NODE_OTHERS = 5, -- 其它状态
+
+	-- 模板库
+	templates = {},
 };
 
 function tree:add_child(id, node, parent_id)
@@ -49,7 +52,11 @@ end
 
 --[[ 与生成有关的构件 ]]
 
-Templates = {};
+function tree.templates:register(id, func)
+	if type(self[id]) == "nil" then
+		self[id] = func;
+	end
+end
 
 local obj = require("objects");
 
@@ -60,13 +67,6 @@ obj.types["portal"] = {
 		object.lock = args.lock;
 		object.target_id = args.target_id;
 		object.target_type = args.target_type or tree.NODE_CLONE;
-	end
-};
-
--- 懒加载标记。
-obj.types["lazy"] = {
-	init = function(object, args)
-		object.is_lazy = true;
 	end
 };
 
@@ -107,7 +107,24 @@ obj.types["jigsaw"] = {
 };
 
 function tree:reach(parent_id, target_id, target_type)
-	-- todo
+	local new_id;
+	if target_type == self.NODE_LOADED then
+		new_id = target_id;
+	elseif target_type == self.NODE_INSAVE then
+		-- todo
+	elseif target_type == self.NODE_UNIQUE then
+		-- todo: resolver?
+	elseif target_type == self.NODE_CLONE then
+		-- todo: resolver, uuid?
+	else
+		-- todo
+	end
+
+	local node = self.nodes[new_id];
+	if type(node.template) == "string" then
+		local f = self.templates[node.template];
+		f(new_id);
+	end
 end
 
 return tree;
