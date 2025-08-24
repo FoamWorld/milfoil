@@ -5,9 +5,15 @@ local tree = {
 	},
 
 	-- 索引信息，使用字符串。
+	idgen = {
+		last_timestamp = 0,
+		sequence = 0,
+	},
+
 	parent = {
 		root = "root",
 	},
+
 	children = {
 		root = {},
 	},
@@ -51,6 +57,25 @@ function tree:get_grandparent_id(id)
 end
 
 --[[ 与生成有关的构件 ]]
+
+function tree.idgen:gen()
+	local timestamp = os.time();
+
+	if timestamp == self.last_timestamp then
+		self.sequence = (self.sequence + 1) & 255;
+	else
+		self.sequence = 0;
+		self.last_timestamp = timestamp;
+	end
+
+	return (timestamp << 8) | self.sequence;
+end
+
+function tree.idgen:combined(id)
+	local seq = string.format("%010x", self:gen());
+	print(seq);
+	return id .. "#" .. seq;
+end
 
 function tree.templates:register(id, func)
 	if type(self[id]) == "nil" then

@@ -2,8 +2,11 @@ local obj = require("objects");
 local tree = require("hierarchy");
 
 tree.templates:register("milfoil-staff_lounge", function(id)
-	tree:add_child("#2", require("milfoil/objects/sofa"), id);
-	tree:add_child("#3", require("milfoil/objects/staff_lounge_screen"), id);
+	local sofa = obj.new():with("milfoil-physical", { size = 2.0 }):with("milfoil-seat");
+	tree:add_child(tree.idgen:combined("sofa"), sofa, id);
+
+	local screen = obj.new():with("milfoil-terminal"):with("milfoil-screen"):with("milfoil-item_supervision_screen");
+	tree:add_child(tree.idgen:combined("screen"), screen, id);
 end);
 
 local staff_lounge = obj.new():with("milfoil-room");
