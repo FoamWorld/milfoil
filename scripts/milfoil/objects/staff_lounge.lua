@@ -9,8 +9,11 @@ tree.templates:register("milfoil-staff_lounge", function(id)
 	tree:add_child(tree.idgen:combined("screen"), screen, id);
 end);
 
-local staff_lounge = obj.new():with("milfoil-room");
-table.insert(staff_lounge.types, "milfoil-staff_lounge");
-staff_lounge.template = "milfoil-staff_lounge";
+local function build()
+	local lounge = obj.new():with("milfoil-room");
+	table.insert(lounge.types, "milfoil-staff_lounge");
+	lounge.template = "milfoil-staff_lounge";
+	return lounge;
+end
 
-return staff_lounge;
+return build;

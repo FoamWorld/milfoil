@@ -28,8 +28,9 @@ local tree = {
 	NODE_CUSTOM = 4, -- 待生成，生成方式自定义
 	NODE_OTHERS = 5, -- 其它状态
 
-	-- 模板库
-	templates = {},
+	-- 生成
+	resolvers = {}, -- 对象解析器，用于 `NODE_UNIQUE` 与 `NODE_CLONE`，后者需自行克隆或生成
+	templates = {}, -- 模板库
 };
 
 function tree:add_child(id, node, parent_id)
@@ -73,7 +74,6 @@ end
 
 function tree.idgen:combined(id)
 	local seq = string.format("%010x", self:gen());
-	print(seq);
 	return id .. "#" .. seq;
 end
 
@@ -132,24 +132,38 @@ obj.types["jigsaw"] = {
 };
 
 function tree:reach(parent_id, target_id, target_type)
-	local new_id;
-	if target_type == self.NODE_LOADED then
-		new_id = target_id;
-	elseif target_type == self.NODE_INSAVE then
-		-- todo
-	elseif target_type == self.NODE_UNIQUE then
-		-- todo: resolver?
-	elseif target_type == self.NODE_CLONE then
-		-- todo: resolver, uuid?
-	else
-		-- todo
+	local new_id = target_id;
+	if target_type ~= self.NODE_LOADED then
+		local node;
+		if target_type == self.NODE_INSAVE then
+			-- todo
+		elseif target_type == self.NODE_UNIQUE then
+			local at, _ = string.find(target_id, "-");
+			local resolver = self.resolvers[string.sub(target_id, 1, at - 1)];
+			node = resolver(string.sub(target_id, at + 1));
+		elseif target_type == self.NODE_CLONE then
+			new_id = self.idgen:combined(target_id);
+			local at, _ = string.find(target_id, "-");
+			local resolver = self.resolvers[string.sub(target_id, 1, at - 1)];
+			node = resolver(string.sub(target_id, at + 1));
+		else
+			error("Target type not supported!", 1);
+		end
+
+		tree:add_child(new_id, node, parent_id);
 	end
 
 	local node = self.nodes[new_id];
+	-- generates recursively
 	if type(node.template) == "string" then
-		local f = self.templates[node.template];
-		f(new_id);
+		local func = self.templates[node.template];
+		if type(func) ~= "function" then
+			error("Template id \"" .. node.template .. "\" points to a " .. type(func) .. " value.", 1);
+		end
+		func(new_id);
 	end
+
+	return new_id;
 end
 
 return tree;
