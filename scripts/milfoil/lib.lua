@@ -1,27 +1,13 @@
 local module = {};
 
 require("app_aliases");
-require("hierarchy");
-local app = require("app");
-app.i18n.load_file("milfoil.ftl");
-
-local obj = require("objects");
-for _, value in ipairs({ "bar", "item_supervision_screen", "physical", "seat" }) do
-	obj.declare("milfoil-" .. value, require("milfoil/types/" .. value));
-end
-
 require("milfoil/registers");
 
-local actives = require("milfoil/actives");
-
+local app = require("app");
+local obj = require("objects");
 local tree = require("hierarchy");
-tree.resolvers["milfoil"] = function(name)
-	local func = require("milfoil/objects/" .. name);
-	if type(func) ~= "function" then
-		error("Target id \"" .. name .. "\" failed to resolve to a function.", 1);
-	end
-	return func();
-end
+
+local actives = require("milfoil/actives");
 
 local shall_init = true;
 function module.init()

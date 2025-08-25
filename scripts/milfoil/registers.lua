@@ -1,5 +1,11 @@
 local app = require("app");
+app.i18n.load_file("milfoil.ftl");
+
 local obj = require("objects");
+for _, value in ipairs({ "bar", "item_supervision_screen", "physical", "seat" }) do
+	obj.declare("milfoil-" .. value, require("milfoil/types/" .. value));
+end
+
 obj.methods.name = function(object, args)
 	for i = #object.types, 1, -1 do
 		local type_name = object.types[i];
@@ -60,3 +66,12 @@ obj.methods.get_text = function(object, args)
 		return app.i18n.t(type_name .. "-" .. field);
 	end
 end;
+
+local tree = require("hierarchy");
+tree.resolvers["milfoil"] = function(name)
+	local func = require("milfoil/objects/" .. name);
+	if type(func) ~= "function" then
+		error("Target id \"" .. name .. "\" failed to resolve to a function.", 1);
+	end
+	return func();
+end
