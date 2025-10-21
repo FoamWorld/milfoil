@@ -1,7 +1,6 @@
 milfoil-door = 门
 milfoil-item_supervision_screen = 物品记录屏幕
 milfoil-palace = 宫殿
-milfoil-plot-introduction-1 = 你在一个陌生的房间中醒来。这里似乎有点乱。
 milfoil-portal = 门径
 milfoil-room = 房间
 milfoil-screen = 屏幕

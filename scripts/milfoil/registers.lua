@@ -1,5 +1,6 @@
 local app = require("app");
 app.i18n.load_file("milfoil.ftl");
+app.i18n.load_file("plots.ftl");
 
 local obj = require("objects");
 for _, value in ipairs({ "bar", "item_supervision_screen", "physical", "seat" }) do
