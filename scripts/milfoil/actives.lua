@@ -4,7 +4,7 @@ local module = {};
 local obj = require("objects");
 
 local function bar(max, speed)
-	return obj.new():with("milfoil-bar", {
+	return obj.new():with("core-bar", {
 		max = max,
 		speed = speed,
 	});

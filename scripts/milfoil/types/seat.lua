@@ -18,9 +18,9 @@ end
 return {
 	actions = function(args)
 		if actives.operator:isin(args.object.id) then
-			return { ["milfoil-leave"] = function() leave(args) end };
+			return { ["core-leave"] = function() leave(args) end };
 		else
-			return { ["milfoil-sit"] = function() sit(args) end };
+			return { ["core-sit"] = function() sit(args) end };
 		end
 	end,
 }

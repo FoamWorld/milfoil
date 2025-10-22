@@ -16,7 +16,7 @@ end
 return {
 	actions = function(args)
 		return {
-			["milfoil-watch"] = watch
+			["core-watch"] = watch
 		};
 	end,
 }

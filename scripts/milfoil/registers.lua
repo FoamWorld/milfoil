@@ -1,16 +1,19 @@
 local app = require("app");
-app.i18n.load_file("milfoil.ftl");
+app.i18n.load_file("milfoil_ts.ftl");
 app.i18n.load_file("plots.ftl");
 
+local path = "milfoil/types/";
 local obj = require("objects");
-for _, value in ipairs({ "bar", "item_supervision_screen", "physical", "seat" }) do
-	obj.declare("milfoil-" .. value, require("milfoil/types/" .. value));
-end
+obj.declare("core-bar", require(path .. "bar"));
+obj.declare("core-physical", require(path .. "physical"));
+obj.declare("core-seat", require(path .. "seat"));
+
+obj.declare("milfoil-item_supervision_screen", require(path .. "item_supervision_screen"))
 
 obj.methods.name = function(object, args)
 	for i = #object.types, 1, -1 do
 		local type_name = object.types[i];
-		local tr = app.i18n._(type_name);
+		local tr = app.i18n._("obj-" .. type_name);
 		if tr ~= "" then
 			return tr;
 		end
@@ -35,17 +38,7 @@ obj.methods.setup_actions = function(object, args)
 	local list = {};
 	local ind = 1;
 	for key, value in pairs(raw) do
-		local name = "";
-		for _, v in ipairs(object.types) do
-			-- looks like: milfoil-sit-on-milfoil-seat
-			name = app.i18n._(key .. "-on-" .. v);
-			if name ~= "" then
-				break;
-			end
-		end
-		if name == "" then
-			name = app.i18n.t(key);
-		end
+		local name = app.i18n.t("obj-" .. key);
 		list[ind] = {
 			name = name,
 			func = value,
