@@ -8,8 +8,12 @@ use std::rc::Rc;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AppState {
-    Loading,
-    Running,
+    Initializing,
+    Menu,
+    // SubMenu(i8),
+    InGame,
+    // InGamePause,
+    // Invalid,
 }
 
 pub struct MyApp {
@@ -32,7 +36,7 @@ impl MyApp {
         let actions_bundle = ActionsBundle::new();
 
         Self {
-            state: AppState::Loading,
+            state: AppState::Initializing,
             config,
             visuals: vec![egui::Visuals::light(), egui::Visuals::dark()],
             selected_visual: 0,
@@ -67,14 +71,20 @@ impl MyApp {
 
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        if self.state == AppState::Loading {
+        if self.state == AppState::Initializing {
             let result = self.init_environment();
             match result {
                 Ok(_) => {}
                 Err(e) => eprintln!("Error while initialization: {:?}", e),
             }
 
-            self.state = AppState::Running;
+            self.messages.borrow_mut().push(
+                self.locales.borrow().translate("app-info-about", None),
+                1,
+                1,
+            );
+
+            self.state = AppState::Menu;
             return;
         }
 

@@ -13,6 +13,7 @@ local shall_init = true;
 function module.init()
 	local pos_begin = tree:reach("root", "milfoil-staff_lounge", tree.NODE_CLONE);
 	actives.operator:relocate(pos_begin);
+	app.queue.clear(1024, 1024);
 	app.queue.push_plain(app.i18n.t("plots-introduction-a1"));
 end
 
@@ -36,7 +37,5 @@ function app.update()
 		print(err);
 	end);
 end
-
-app.update();
 
 return module;

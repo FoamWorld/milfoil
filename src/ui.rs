@@ -1,4 +1,4 @@
-use crate::{app::MyApp, binding::run_registered};
+use crate::{app::*, binding::run_registered};
 use eframe::egui::{self, Color32, Context, FontFamily, Stroke, Style, TextStyle, Ui};
 
 const DF_FONT_ID: egui::FontId = egui::FontId::new(20.0, FontFamily::Proportional);
@@ -35,10 +35,9 @@ pub fn add_sidebar(app: &mut MyApp, ctx: &Context) {
             ui.vertical(|ui| {
                 ui.heading(lc.translate("app-menu-title", None));
                 ui.separator();
-                if ui.button(lc.translate("app-menu-info", None)).clicked() {
-                    app.messages
-                        .borrow_mut()
-                        .push(lc.translate("app-info-about", None), 1, 1);
+                if ui.button(lc.translate("app-menu-start", None)).clicked() {
+                    let _ = run_registered(&app.lua_state, "update");
+                    app.state = AppState::InGame;
                 }
                 if ui
                     .button(lc.translate("app-menu-change_theme", None))
@@ -77,14 +76,16 @@ pub fn add_central(app: &mut MyApp, ctx: &Context) {
                     }
                 }
 
-                ui.separator();
+                if app.state == AppState::InGame {
+                    ui.separator();
 
-                if add_action_buttons(app, ui) {
-                    let _ = run_registered(&app.lua_state, "update");
-                }
+                    if add_action_buttons(app, ui) {
+                        let _ = run_registered(&app.lua_state, "update");
+                    }
 
-                if ui.ctx().input(|i| i.key_pressed(egui::Key::ArrowDown)) {
-                    ui.scroll_to_cursor(Some(egui::Align::BOTTOM));
+                    if ui.ctx().input(|i| i.key_pressed(egui::Key::ArrowDown)) {
+                        ui.scroll_to_cursor(Some(egui::Align::BOTTOM));
+                    }
                 }
             });
     });
