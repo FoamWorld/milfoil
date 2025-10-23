@@ -5,7 +5,11 @@ tree.templates:register("milfoil-staff_lounge", function(id)
 	local sofa = obj.new():with("core-physical", { size = 2.0 }):with("core-seat");
 	tree:add_child(tree.idgen:combined("sofa"), sofa, id);
 
-	local screen = obj.new():with("core-terminal"):with("core-screen"):with("milfoil-item_supervision_screen");
+	local screen = obj.new():with("core-terminal"):with("core-screen")
+		:with("milfoil-item_supervision_screen", {
+			notes = { "禁止携带异常物品入内！" },
+			records = { { name = "milfoil-item_supervision_screen" }, { name = "core-sofa" } }
+		});
 	tree:add_child(tree.idgen:combined("screen"), screen, id);
 end);
 

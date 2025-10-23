@@ -20,5 +20,7 @@ obj-milfoil-void_emperor_palace = 无上虚皇天
 ## Action [core]
 
 obj-core-leave = 离开
+obj-core-read = 阅读
+obj-core-skim = 略读
 obj-core-sit = 坐下
 obj-core-watch = 观看
